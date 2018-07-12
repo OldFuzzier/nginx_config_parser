@@ -2,7 +2,6 @@
 # coding=utf-8
 
 import re
-import time
 
 
 # solve file change to in_list and string problem
@@ -47,7 +46,7 @@ class Solution(object):
         return temp_list
 
     # combine read_file and backtracking methods
-    def toInList(self, filename):
+    def to_inlist(self, filename):
         lst = self.read_file(filename)
         in_list = self.backTracking(lst, {'i': 0}, [])
         return in_list
@@ -94,26 +93,22 @@ class Node(object):
         if isinstance(self.children, dict):
             return 'DICT: {ele}'.format(ele=str(self.children.keys()))
         elif isinstance(self.children, list):
-            return 'LIST {ele}'.format(ele=str(self.children))
+            return 'LIST: {ele}'.format(ele=str(self.children))
         else:  # string
-            return 'STRING {ele}'.format(ele=ele.val)
+            return 'STRING: {ele}'.format(ele=ele.val)
 
     # debug
     def __repr__(self):
         return '{val}'.format(val=self.val)
         # return '{val} --> {children}'.format(val=self.val, children=self.children)
 
+    # isinstance(self.children, dict) execute this method
     def __getattr__(self, item):
         child = self.children[item]
         return child
 
+    # if isinstance(self.children, list) execute this method
     def __getitem__(self, item):
-        # if item in self.item_set:
-        #     child_list = self.collectChild(item)  # list
-        #     return str(child_list)
-        # else:
-
-        # if isinstance(self.children, list)
         child = self.children[item]
         return child
 
@@ -134,13 +129,13 @@ class SpecialNode(Node):
         :param special_val: string
         :param children: list
         '''
-        super(SpecialNode, self).__init__(special_val, children)
+        super(SpecialNode, self).__init__(special_val, children)  # children: List
 
 
 class BulidNode(object):
 
     def __init__(self):
-        self.solve = Solution()
+        self.solve = Solution()  # offer string support
         self.item_set = {'location', 'upstream', 'error_page'}  # special item
 
     # build n-node tree(core method)
@@ -185,8 +180,6 @@ class BulidNode(object):
                 for _ in xrange(len(queue)):
                     root = queue.pop(0)
                     children = root.children  # Node or dict
-                    # key_temp = root.val.split()  # ["location",  "/publishManage"]
-                    # key_first = key_temp[0]  # "location"
                     if isinstance(children, dict):
                         queue.extend(children.values())  # queue add
 
@@ -205,15 +198,12 @@ class BulidNode(object):
                     else:  # children(Node)
                         pass
 
-        def prune_hepler():
-            pass
-
         bfs(root)
-        item_dict.clear()  # clear
+        item_dict.clear()  # clear dict
         return
 
     # combine build and pruning
-    def buildTree(self, in_list):
+    def build_tree(self, in_list):
         root = self.build(in_list)
         self.prune(root)
         return root
@@ -225,8 +215,8 @@ class BulidNode(object):
         '''
         :return: n-node
         '''
-        in_list = self.solve.toInList(filename)
-        root = self.buildTree(in_list)
+        in_list = self.solve.to_inlist(filename)
+        root = self.build_tree(in_list)
         # root = self.build(in_list)  # test build
         return root
 
@@ -239,18 +229,4 @@ class BulidNode(object):
 
 
 if __name__ == '__main__':
-    # test
-    # lst = Solution().main('nginx.conf')
-    # print lst
-    # BulidNode().build(lst).children['http'].children['server'].children['location /'].children
-
-    bn_obj = BulidNode().load('nginx.conf')
-    # print bn_obj['http']['server']['location'].children
-    # print bn_obj['http']['server']['location'][0].children
-    # print bn_obj['http']['server']['error_page'].children
-
-    error_page = bn_obj.http.server.error_page
-    print bn_obj.http.server.error_page[1]
-    print bn_obj.http.server.location
-    print bn_obj.http.server.location[2]
-    print bn_obj.http.server.location[2].index
+    nginx_obj = BulidNode().load('nginx.conf')
